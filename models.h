@@ -4,7 +4,6 @@
 #include <string>
 #include <Wt/Dbo/Dbo.h>
 #include <Wt/Dbo/ptr.h>
-#include <Wt/WDate.h>
 
 namespace dbo = Wt::Dbo;
 
@@ -93,7 +92,7 @@ class Sale {
 public:
     int id = 0;
     double price = 0.0;
-    Wt::WDate date_sale;
+    std::string date_sale;    // ← дата в виде строки
     dbo::ptr<Stock> stock;
     int count = 0;
 

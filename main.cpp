@@ -3,7 +3,6 @@
 #include <string>
 #include <Wt/Dbo/Dbo.h>
 #include <Wt/Dbo/backend/Postgres.h>
-#include <Wt/WDate.h>
 #include "models.h"
 
 namespace dbo = Wt::Dbo;
@@ -33,7 +32,6 @@ int main() {
         {
             dbo::Transaction t(session);
 
-            // Проверим, есть ли уже данные — чтобы не дублировать при повторном запуске
             auto count = session.query<int>("SELECT COUNT(*) FROM publisher").resultValue();
             if (count == 0) {
                 // Издатели
@@ -63,7 +61,7 @@ int main() {
                 b3.modify()->title = "Чистый код";
                 b3.modify()->publisher = pub2;
 
-                // Склад (товар в магазинах)
+                // Склад
                 auto s1 = session.add(std::make_unique<Stock>());
                 s1.modify()->book = b1;
                 s1.modify()->shop = shop1;
@@ -87,7 +85,7 @@ int main() {
                 // Продажи
                 auto sale1 = session.add(std::make_unique<Sale>());
                 sale1.modify()->price = 1500.0;
-                sale1.modify()->date_sale = Wt::WDate(2024, 1, 15);
+                sale1.modify()->date_sale = "2024-01-15";
                 sale1.modify()->stock = s1;
                 sale1.modify()->count = 2;
 
@@ -99,14 +97,14 @@ int main() {
             }
         }
 
-        // ---------- 5. Запрос у пользователя имени/ID издателя ----------
+        // ---------- 5. Запрос у пользователя ----------
         std::string input;
         std::cout << "Введите имя или ID издателя: ";
         std::getline(std::cin, input);
+
         // ---------- 6. Поиск магазинов ----------
         {
             dbo::Transaction t(session);
-
             dbo::collection<dbo::ptr<Publisher>> publishers;
             try {
                 int id = std::stoi(input);
@@ -126,7 +124,6 @@ int main() {
                 << " (ID=" << publisher->id << ")" << std::endl;
             std::cout << "Магазины, где продаются его книги:" << std::endl;
 
-            // Запрос: магазины через цепочку Stock → Book → Publisher
             auto shops = session.query<dbo::ptr<Shop>>(
                 "SELECT DISTINCT s FROM shop s "
                 "JOIN stock st ON st.id_shop = s.id "
