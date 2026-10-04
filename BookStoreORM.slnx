@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="BookStoreORM.vcxproj" Id="9deb5a33-1a1a-4246-b59a-f5dc3baf9d15" />
+</Solution>
